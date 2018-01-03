@@ -1,4 +1,5 @@
 import com.vdurmont.emoji.EmojiParser;
+import menu.Menu;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.Update;

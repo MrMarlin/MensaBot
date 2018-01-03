@@ -14,5 +14,6 @@ Mensabot was born. A bot, that sends a poll with the daily menus. Everybody
 who is in  the Telegram group can vote and by lunch it is decided where to
 eat. 
 
+
 <h1>Todo</h1>
-- Way to fetch data from SV Restaurant
+

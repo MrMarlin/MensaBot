@@ -1,5 +1,8 @@
 import com.vdurmont.emoji.EmojiParser;
 import menu.Menu;
+import menu.Menuplan;
+import menu.MenuplanCrawler;
+import menu.MenuplanList;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.Update;
@@ -70,9 +73,16 @@ public class MensaBot extends TelegramLongPollingBot {
 
     private String createPollMessage() {
         String message_text = "";
-        Menu menu = new Menu();
-        for (String s : menu.getMenu()) {
-            message_text += "\n" + s;
+        MenuplanList mensaMenuplanList = MenuplanCrawler.crawlMenuplans("Mensa");
+        MenuplanList forschungszentrumMenuplanList = MenuplanCrawler.crawlMenuplans("Forschungszentrum");
+
+        for (int i = 0; i<3; i++){
+            message_text+="Mensa: " + mensaMenuplanList.get(i).get(i).getTitle()+"\n"+mensaMenuplanList.get(i).get(i).getDescription()+"\n"+"\n";
+        }
+        message_text+="\n";
+        for (int i = 0; i<3; i++){
+            message_text+="Bistro: " + forschungszentrumMenuplanList.get(i).get(i).getTitle()+"\n"+
+                    forschungszentrumMenuplanList.get(i).get(i).getDescription()+"\n"+"\n";
         }
 
         return message_text;

@@ -1,5 +1,5 @@
 # MensaBot
-Telegram Polling Bot for Food decisions
+Telegram Polling Bot for Food decisions at HSR Rapperswil
 
 <h1>Description</h1>
 This bot fetches the daily menus for the 'Mensa' and 'Forschungszentrum' at 

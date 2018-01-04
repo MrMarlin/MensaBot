@@ -5,7 +5,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import javax.print.attribute.standard.MediaName;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,27 +12,29 @@ import java.util.List;
 
 public class MenuplanCrawler {
 
-    //TODO Crawl correct data, current crawler crawls through different days
-
     private final static String MENSA_MENUPLAN_URL = "http://hochschule-rapperswil.sv-restaurant.ch/de/menuplan/mensa/";
-    private final static String FORSCHUNGSZENTRUM_MENUPLAN_URL = "http://hochschule-rapperswil.sv-restaurant.ch/de/menuplan/forschungszentrum/";
+    private final static String BISTRO_MENUPLAN_URL = "http://hochschule-rapperswil.sv-restaurant.ch/de/menuplan/forschungszentrum/";
 
     private final static String HTML_ELEMENT_MENUPLAN_DATE = "span.date";
     private final static String HTML_ELEMENT_MENU_DESCRIPTION = "p.menu-description";
     private final static String HTML_ELEMENT_MENU_TITLE = "h2.menu-title";
 
-    public static MenuplanList crawlMenuplans(String locationToCrawl) {
+    private final static int MENSA = 1;
+    private final static int BISTRO = 2;
+
+
+    public static MenuplanList crawlMenuplans(String websiteToCrawl) {
         String location;
-        if (locationToCrawl.equals("Mensa")) {
+        if (websiteToCrawl.equals("Mensa")) {
             location = MENSA_MENUPLAN_URL;
-        } else if (locationToCrawl.equals("Forschungszentrum")) {
-            location = FORSCHUNGSZENTRUM_MENUPLAN_URL;
+        } else if (websiteToCrawl.equals("Bistro")) {
+            location = BISTRO_MENUPLAN_URL;
         } else {
             throw new IllegalArgumentException();
         }
         List<String> menuTitles = new ArrayList<>();
         List<String> menuDescriptions = new ArrayList<>();
-        List<String> days = new ArrayList<>();
+        List<String> menuDates = new ArrayList<>();
 
         MenuplanList menuplans = new MenuplanList();
 
@@ -47,33 +48,63 @@ public class MenuplanCrawler {
 
         Elements titles = website.select(HTML_ELEMENT_MENU_TITLE);
         for (Element title : titles) {
-            menuTitles.add(title.text());
+            if (websiteToCrawl.equals("Mensa")) {
+                menuTitles.add(title.text());
+            } else {
+                if (!(title.nextElementSibling()
+                        .nextElementSibling()
+                        .nextElementSibling()
+                        .select("div.menu-prices").hasText())) {
+                    menuTitles.add(title.text());
+                }
+            }
         }
         Elements descriptions = website.select(HTML_ELEMENT_MENU_DESCRIPTION);
         for (Element description : descriptions) {
-            if (locationToCrawl.equals("Forschungszentrum")) {
-                menuDescriptions.add(description.html()
-                        .replaceAll("<br> ", "\n")
-                        .replaceAll("&amp;", "&")
-                        .replaceAll("\n.*\\..*\\..*\n.*\\..*\\..*", ""));
+            if (websiteToCrawl.equals("Mensa")) {
+                menuDescriptions.add(replaceLineBreak(description, MENSA));
+            } else {
+                if (!(description.nextElementSibling().select("div.menu-prices").hasText())) {
+                    menuDescriptions.add(replaceLineBreak(description, BISTRO));
+                }
             }
-            menuDescriptions.add(description.html()
-                    .replaceAll("<br> ", "\n")
-                    .replaceAll("&amp;", "&"));
         }
         Elements dates = website.select(HTML_ELEMENT_MENUPLAN_DATE);
         for (Element date : dates) {
-            days.add(date.text());
+            menuDates.add(date.text());
         }
 
-        for (int i = 0; i < days.size(); i++) {
-            menuplans.add(new Menuplan(days.get(i),
-                    new MenuplanItem(menuTitles.get(i * 3), menuDescriptions.get(i * 3)),
-                    new MenuplanItem(menuTitles.get((i * 3) + 1), menuDescriptions.get((i * 3) + 1)),
-                    new MenuplanItem(menuTitles.get((i * 3) + 2), menuDescriptions.get((i * 3) + 2))));
+        for (int i = 0; i < menuDates.size(); i++) {
+            if (websiteToCrawl.equals("Mensa")) {
+                menuplans.add(new Menuplan(menuDates.get(i),
+                        new MenuplanItem(menuTitles.get(i * 3), menuDescriptions.get(i * 3)),
+                        new MenuplanItem(menuTitles.get((i * 3) + 1), menuDescriptions.get((i * 3) + 1)),
+                        new MenuplanItem(menuTitles.get((i * 3) + 2), menuDescriptions.get((i * 3) + 2))));
+            } else {
+
+                menuplans.add(new Menuplan(menuDates.get(i),
+                        new MenuplanItem(menuTitles.get(i * 2), menuDescriptions.get(i * 2)),
+                        new MenuplanItem(menuTitles.get((i * 2) + 1), menuDescriptions.get((i * 2) + 1))));
+            }
         }
 
         return menuplans;
+    }
+
+    private static String replaceLineBreak(Element htmlToParse, int selector) {
+        if (selector == MENSA) {
+            return htmlToParse.html()
+                    .replaceAll("<br> ", "\n")
+                    .replaceAll("&amp;", "&");
+        } else if (selector == BISTRO) {
+            return htmlToParse.html()
+                    .replaceAll("<br> ", "\n")
+                    .replaceAll("&amp;", "&")
+                    .replaceAll("\n.*\\..*\\..*\n.*\\..*\\..*", "");
+        } else {
+            throw new IllegalArgumentException();
+        }
+
     }
 
 }

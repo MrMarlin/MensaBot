@@ -1,6 +1,4 @@
 import com.vdurmont.emoji.EmojiParser;
-import menu.Menu;
-import menu.Menuplan;
 import menu.MenuplanCrawler;
 import menu.MenuplanList;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -12,16 +10,18 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static java.lang.Math.toIntExact;
 
 public class MensaBot extends TelegramLongPollingBot {
 
-    int mensaCounter;
-    int bistroCounter;
-    int externCounter;
-    int selfCounter;
+    private int mensaCounter;
+    private int bistroCounter;
+    private int externCounter;
+    private int selfCounter;
+    private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
 
     //    @Override
     public void onUpdateReceived(Update update) {
@@ -74,15 +74,28 @@ public class MensaBot extends TelegramLongPollingBot {
     private String createPollMessage() {
         String message_text = "";
         MenuplanList mensaMenuplanList = MenuplanCrawler.crawlMenuplans("Mensa");
-        MenuplanList forschungszentrumMenuplanList = MenuplanCrawler.crawlMenuplans("Forschungszentrum");
+        MenuplanList forschungszentrumMenuplanList = MenuplanCrawler.crawlMenuplans("Bistro");
 
-        for (int i = 0; i<3; i++){
-            message_text+="Mensa: " + mensaMenuplanList.get(i).get(i).getTitle()+"\n"+mensaMenuplanList.get(i).get(i).getDescription()+"\n"+"\n";
+        if (weekday > 5) {
+            weekday = 2;
         }
-        message_text+="\n";
-        for (int i = 0; i<3; i++){
-            message_text+="Bistro: " + forschungszentrumMenuplanList.get(i).get(i).getTitle()+"\n"+
-                    forschungszentrumMenuplanList.get(i).get(i).getDescription()+"\n"+"\n";
+
+        for (int i = 0; i < 3; i++) {
+            message_text += "Mensa: " + mensaMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
+                    mensaMenuplanList.get(weekday - 2).get(i).getDescription() + "\n\n";
+        }
+        String divider = "";
+        for (int i = 0; i < 17; i++) {
+            divider += ":fork_knife_plate: ";
+        }
+        String emojiDivider = EmojiParser.parseToUnicode(divider);
+
+        message_text += emojiDivider + "\n";
+
+        message_text += "\n";
+        for (int i = 0; i < 2; i++) {
+            message_text += "Bistro: " + forschungszentrumMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
+                    forschungszentrumMenuplanList.get(weekday - 2).get(i).getDescription() + "\n";
         }
 
         return message_text;
@@ -90,9 +103,22 @@ public class MensaBot extends TelegramLongPollingBot {
 
     private String createCallbackMessage(String call_data) {
         String answer = "Du hast für " + call_data + " abgestimmt.\n\n";
-        Menu menu = new Menu();
-        for (String s : menu.getMenu()) {
-            answer += s + "\n";
+
+        MenuplanList mensaMenuplanList = MenuplanCrawler.crawlMenuplans("Mensa");
+        MenuplanList forschungszentrumMenuplanList = MenuplanCrawler.crawlMenuplans("Bistro");
+
+        if (weekday > 5) {
+            weekday = 2;
+        }
+        System.out.println(weekday + "" + mensaMenuplanList.size() + "" + forschungszentrumMenuplanList.size());
+        for (int i = 0; i < 3; i++) {
+            answer += "Mensa: " + mensaMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
+                    mensaMenuplanList.get(weekday - 2).get(i).getDescription() + "\n" + "\n";
+        }
+        answer += "\n";
+        for (int i = 0; i < 2; i++) {
+            answer += "Bistro: " + forschungszentrumMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
+                    forschungszentrumMenuplanList.get(weekday - 2).get(i).getDescription() + "\n";
         }
 
         if (call_data.equals("Mensa")) {
@@ -113,7 +139,7 @@ public class MensaBot extends TelegramLongPollingBot {
 
         String selfEmojis = createEmojiString(selfCounter);
 
-        answer += "\nMensa: "+"\t" + mensaEmojis + "\nBistro: "+"\t" + bistroEmojis + "\nExtern: "+"\t" + exterbEmojis +
+        answer += "\nMensa: " + "\t" + mensaEmojis + "\nBistro: " + "\t" + bistroEmojis + "\nExtern: " + "\t" + exterbEmojis +
                 "\nSelber: \t" + selfEmojis;
         return answer;
 
@@ -122,10 +148,10 @@ public class MensaBot extends TelegramLongPollingBot {
         //todo disable /start command if bot is once started
     }
 
-    private String createEmojiString(int counter){
+    private String createEmojiString(int counter) {
         String emojis = "";
         for (int i = 0; i < counter; i++) {
-             emojis += EmojiParser.parseToUnicode(":point_up:");
+            emojis += EmojiParser.parseToUnicode(":point_up:");
         }
         return emojis;
     }

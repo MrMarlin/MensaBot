@@ -4,7 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +31,10 @@ public class MenuplanCrawler {
         } else {
             throw new IllegalArgumentException();
         }
+
         List<String> menuTitles = new ArrayList<>();
         List<String> menuDescriptions = new ArrayList<>();
         List<String> menuDates = new ArrayList<>();
-
         MenuplanList menuplans = new MenuplanList();
 
         Document website = null;
@@ -76,18 +75,16 @@ public class MenuplanCrawler {
 
         for (int i = 0; i < menuDates.size(); i++) {
             if (websiteToCrawl.equals("Mensa")) {
-                menuplans.add(new Menuplan(menuDates.get(i),
+                menuplans.add(new Menuplan(
                         new MenuplanItem(menuTitles.get(i * 3), menuDescriptions.get(i * 3)),
                         new MenuplanItem(menuTitles.get((i * 3) + 1), menuDescriptions.get((i * 3) + 1)),
                         new MenuplanItem(menuTitles.get((i * 3) + 2), menuDescriptions.get((i * 3) + 2))));
             } else {
-
-                menuplans.add(new Menuplan(menuDates.get(i),
+                menuplans.add(new Menuplan(
                         new MenuplanItem(menuTitles.get(i * 2), menuDescriptions.get(i * 2)),
                         new MenuplanItem(menuTitles.get((i * 2) + 1), menuDescriptions.get((i * 2) + 1))));
             }
         }
-
         return menuplans;
     }
 
@@ -104,7 +101,6 @@ public class MenuplanCrawler {
         } else {
             throw new IllegalArgumentException();
         }
-
     }
 
 }

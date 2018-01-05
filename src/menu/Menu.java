@@ -32,6 +32,4 @@ public class Menu {
     public ArrayList<String> getMenu() {
         return menu;
     }
-
-
 }

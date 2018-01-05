@@ -18,20 +18,24 @@ public class MensaBot extends TelegramLongPollingBot {
     private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
     private Map<Integer, String> votes = new HashMap<>();
     private Map<String, Integer> voteCounter = new HashMap<>();
+    private boolean started = false;
 
     public void onUpdateReceived(Update update) {
-        voteCounter.put("Mensa", 0);
-        voteCounter.put("Bistro", 0);
-        voteCounter.put("Extern", 0);
-        voteCounter.put("Selber", 0);
+        if (!started) {
+            voteCounter.put("Mensa", 0);
+            voteCounter.put("Bistro", 0);
+            voteCounter.put("Extern", 0);
+            voteCounter.put("Selber", 0);
+            started = true;
+        }
         if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals("/start")) {
             long chat_id = update.getMessage().getChatId();
 
             SendMessage message = new SendMessage()
-                                    .setReplyMarkup(genearteKeyboardMarkup())
-                                    .setChatId(chat_id)
-                                    .setText(createPollMessage())
-                                    .setParseMode("HTML");
+                    .setReplyMarkup(genearteKeyboardMarkup())
+                    .setChatId(chat_id)
+                    .setText(createPollMessage())
+                    .setParseMode("HTML");
 
             try {
                 execute(message);
@@ -52,12 +56,12 @@ public class MensaBot extends TelegramLongPollingBot {
                     .setText(answer)
                     .setReplyMarkup(genearteKeyboardMarkup())
                     .setParseMode("HTML");
+
             try {
                 execute(new_message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -92,10 +96,18 @@ public class MensaBot extends TelegramLongPollingBot {
             }
             votes.put(userId, call_data);
         } else if (!(votes.get(userId).equals(call_data))) {
-            voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) - 1);
+            if (voteCounter.get(votes.get(userId)) > 0) {
+                voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) - 1);
+            }
             votes.put(userId, call_data);
             voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) + 1);
 
+        } else {
+            if (voteCounter.get(votes.get(userId)) > 0) {
+                voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) - 1);
+            } else {
+                voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) + 1);
+            }
         }
 
         answer += "\nDu hast für <b>" + votes.get(userId) + "</b> abgestimmt.\n";

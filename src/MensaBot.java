@@ -9,13 +9,16 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboar
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.lang.Math.toIntExact;
 
 public class MensaBot extends TelegramLongPollingBot {
 
-    private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+//    private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+    private int weekday = 2;
     private Map<Integer, String> votes = new HashMap<>();
     private Map<String, Integer> voteCounter = new HashMap<>();
     private boolean started = false;
@@ -110,7 +113,6 @@ public class MensaBot extends TelegramLongPollingBot {
             }
         }
 
-        answer += "\nDu hast für <b>" + votes.get(userId) + "</b> abgestimmt.\n";
 
         answer += "\nMensa: " + "\t" + generateEmojiString(voteCounter.get("Mensa")) +
                 "\nBistro: " + generateEmojiString(voteCounter.get("Bistro")) +
@@ -159,6 +161,10 @@ public class MensaBot extends TelegramLongPollingBot {
         MenuplanList mensaMenuplanList = MenuplanCrawler.crawlMenuplans("Mensa");
         MenuplanList bistroMenuplanList = MenuplanCrawler.crawlMenuplans("Bistro");
         String resultString = "";
+
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        Calendar cal = Calendar.getInstance();
+        resultString+="<b>"+dateFormat.format(cal.getTime())+"</b>\n\n";
 
         for (int i = 0; i < 3; i++) {
             resultString += "<b>Mensa: </b>\n" + mensaMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +

@@ -17,7 +17,7 @@ import static java.lang.Math.toIntExact;
 
 public class MensaBot extends TelegramLongPollingBot {
 
-//    private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+    //    private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
     private int weekday = 2;
     private Map<Integer, String> votes = new HashMap<>();
     private Map<String, Integer> voteCounter = new HashMap<>();
@@ -164,7 +164,7 @@ public class MensaBot extends TelegramLongPollingBot {
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         Calendar cal = Calendar.getInstance();
-        resultString+="<b>"+dateFormat.format(cal.getTime())+"</b>\n\n";
+        resultString += "<b>" + dateFormat.format(cal.getTime()) + "</b>\n\n";
 
         for (int i = 0; i < 3; i++) {
             resultString += "<b>Mensa: </b>\n" + mensaMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
@@ -176,8 +176,11 @@ public class MensaBot extends TelegramLongPollingBot {
         resultString += "\n";
         for (int i = 0; i < 2; i++) {
             resultString += "<b>Bistro: </b>\n" + bistroMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
-                    bistroMenuplanList.get(weekday - 2).get(i).getDescription();
+                    bistroMenuplanList.get(weekday - 2).get(i).getDescription() + "\n";
         }
+        resultString += "<b>------Voting------</b>";
+        resultString += "\nMensa: " + "\t" + "\nBistro: " + "\nExtern: " + "\nSelber: ";
+
         return resultString;
     }
 }

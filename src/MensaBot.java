@@ -113,6 +113,7 @@ public class MensaBot extends TelegramLongPollingBot {
             }
         }
 
+        answer += "<b>------Voting------</b>";
 
         answer += "\nMensa: " + "\t" + generateEmojiString(voteCounter.get("Mensa")) +
                 "\nBistro: " + generateEmojiString(voteCounter.get("Bistro")) +
@@ -178,8 +179,6 @@ public class MensaBot extends TelegramLongPollingBot {
             resultString += "<b>Bistro: </b>\n" + bistroMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
                     bistroMenuplanList.get(weekday - 2).get(i).getDescription() + "\n";
         }
-        resultString += "<b>------Voting------</b>";
-        resultString += "\nMensa: " + "\t" + "\nBistro: " + "\nExtern: " + "\nSelber: ";
 
         return resultString;
     }

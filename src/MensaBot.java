@@ -113,7 +113,7 @@ public class MensaBot extends TelegramLongPollingBot {
             }
         }
 
-        answer += "<b>------Voting------</b>";
+        answer += "<b>------Abstimmung------</b>";
 
         answer += "\nMensa: " + "\t" + generateEmojiString(voteCounter.get("Mensa")) +
                 "\nBistro: " + generateEmojiString(voteCounter.get("Bistro")) +

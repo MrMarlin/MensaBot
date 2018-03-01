@@ -1,22 +1,27 @@
 public class Vote {
-    private long chatId;
+    private long userId;
     private String location;
-    private boolean set;
+    private boolean voted;
 
     public Vote(long chatId, String location){
-        this.chatId = chatId;
+        this.userId = chatId;
         this.location = location;
+        voted = false;
     }
 
-    public long getChatId() {
-        return chatId;
+    public long getUserId() {
+        return userId;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public boolean isSet() {
-        return set;
+    public boolean isVoted() {
+        return voted;
+    }
+
+    public void setVoted(boolean voted){
+        this.voted = voted;
     }
 }

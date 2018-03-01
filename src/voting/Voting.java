@@ -1,3 +1,7 @@
+package voting;
+
+import Util.MensaBotUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +19,7 @@ public class Voting {
     }
 
     public String voteHandler(long userId, String call_data){
-        Util util = new Util();
+        MensaBotUtil util = new MensaBotUtil();
         String answer = "";
         Vote current_vote = new Vote(userId, call_data);
         this.init();

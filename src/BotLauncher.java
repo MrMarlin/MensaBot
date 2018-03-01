@@ -10,7 +10,7 @@ public class BotLauncher {
 
         try {
             botsApi.registerBot(new MensaBot());
-        }catch (TelegramApiException e){
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }

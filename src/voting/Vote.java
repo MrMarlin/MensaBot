@@ -1,3 +1,5 @@
+package voting;
+
 public class Vote {
     private long userId;
     private String location;

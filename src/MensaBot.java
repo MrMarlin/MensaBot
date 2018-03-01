@@ -1,24 +1,26 @@
+import Util.MensaBotUtil;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import voting.Voting;
 
 import static java.lang.Math.toIntExact;
 
 public class MensaBot extends TelegramLongPollingBot {
 
-    Util util = new Util();
+    MensaBotUtil mensaBotUtil = new MensaBotUtil();
     Voting voting = new Voting();
 
     public void onUpdateReceived(Update update) {
 
-        Util util = new Util();
+        MensaBotUtil mensaBotUtil = new MensaBotUtil();
         if (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText().equals("/start")) {
             long chat_id = update.getMessage().getChatId();
 
             SendMessage message = new SendMessage()
-                    .setReplyMarkup(util.generateKeyboardMarkup())
+                    .setReplyMarkup(mensaBotUtil.generateKeyboardMarkup())
                     .setChatId(chat_id)
                     .setText(createPollMessage())
                     .setParseMode("HTML");
@@ -37,7 +39,7 @@ public class MensaBot extends TelegramLongPollingBot {
                     .setChatId(chat_id)
                     .setMessageId(toIntExact(message_id))
                     .setText(answer)
-                    .setReplyMarkup(util.generateKeyboardMarkup())
+                    .setReplyMarkup(mensaBotUtil.generateKeyboardMarkup())
                     .setParseMode("HTML");
             try {
                 execute(new_message);
@@ -58,17 +60,15 @@ public class MensaBot extends TelegramLongPollingBot {
     }
 
     private String createPollMessage() {
-        Util util = new Util();
+        MensaBotUtil mensaBotUtil = new MensaBotUtil();
         String message_text = "";
-        message_text += util.generateMenuText();
+        message_text += mensaBotUtil.generateMenuText();
         return message_text;
     }
 
     private String createCallbackMessage(String call_data, long userId) {
-        String answer = util.generateMenuText();
-        System.out.println(userId);
+        String answer = mensaBotUtil.generateMenuText();
         String result = voting.voteHandler(userId, call_data);
-        System.out.println(result);
         return answer + result;
     }
 

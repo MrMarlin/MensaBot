@@ -1,3 +1,5 @@
+package Util;
+
 import com.vdurmont.emoji.EmojiParser;
 import menu.MenuplanCrawler;
 import menu.MenuplanList;

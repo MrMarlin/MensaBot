@@ -17,11 +17,12 @@ import static java.lang.Math.toIntExact;
 
 public class MensaBot extends TelegramLongPollingBot {
 
-    //    private int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
     private int weekday = 2;
-    private Map<Integer, String> votes = new HashMap<>();
+    private Map<Long,Vote> votes = new HashMap<>();
     private Map<String, Integer> voteCounter = new HashMap<>();
     private boolean started = false;
+
+    //TODO enum for Mensa Bistro etc.
 
     public void onUpdateReceived(Update update) {
         if (!started) {
@@ -35,7 +36,7 @@ public class MensaBot extends TelegramLongPollingBot {
             long chat_id = update.getMessage().getChatId();
 
             SendMessage message = new SendMessage()
-                    .setReplyMarkup(genearteKeyboardMarkup())
+                    .setReplyMarkup(generateKeyboardMarkup())
                     .setChatId(chat_id)
                     .setText(createPollMessage())
                     .setParseMode("HTML");
@@ -57,7 +58,7 @@ public class MensaBot extends TelegramLongPollingBot {
                     .setChatId(chat_id)
                     .setMessageId(toIntExact(message_id))
                     .setText(answer)
-                    .setReplyMarkup(genearteKeyboardMarkup())
+                    .setReplyMarkup(generateKeyboardMarkup())
                     .setParseMode("HTML");
 
             try {
@@ -75,7 +76,7 @@ public class MensaBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return //insert BotToken here;
+        return "Enter bot token here";
     }
 
     private String createPollMessage() {
@@ -86,7 +87,7 @@ public class MensaBot extends TelegramLongPollingBot {
 
     private String createCallbackMessage(String call_data, int userId) {
         String answer = this.generateMenuText();
-
+        System.out.println(userId);
         if (!(votes.containsKey(userId))) {
             if (call_data.equals("Mensa")) {
                 voteCounter.put("Mensa", voteCounter.get("Mensa") + 1);
@@ -105,7 +106,9 @@ public class MensaBot extends TelegramLongPollingBot {
             votes.put(userId, call_data);
             voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) + 1);
 
-        } else {
+        } else if((votes.get(userId).equals(call_data))){
+
+            //TODO bugfix with Status bit in String, if not working, -> introduce 'Vote' class
             if (voteCounter.get(votes.get(userId)) > 0) {
                 voteCounter.put(votes.get(userId), voteCounter.get(votes.get(userId)) - 1);
             } else {
@@ -131,7 +134,7 @@ public class MensaBot extends TelegramLongPollingBot {
         return emojis;
     }
 
-    private InlineKeyboardMarkup genearteKeyboardMarkup() {
+    private InlineKeyboardMarkup generateKeyboardMarkup() {
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();

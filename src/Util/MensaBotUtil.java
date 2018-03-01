@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Util {
+public class MensaBotUtil {
 
     public int weekday = 2;
 

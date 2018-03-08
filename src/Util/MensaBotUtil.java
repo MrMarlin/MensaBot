@@ -14,9 +14,9 @@ import java.util.List;
 
 public class MensaBotUtil {
 
-    public int weekday = 2;
+    private int weekday = 2;
 
-    public String generateEmojiString(int counter) {
+    public String generateEmojiString(long counter) {
         String emojis = "";
         for (int i = 0; i < counter; i++) {
             emojis += EmojiParser.parseToUnicode(":point_up:");
@@ -42,7 +42,7 @@ public class MensaBotUtil {
         return markupInline;
     }
 
-    public String generateEmojiDivider() {
+    private String generateEmojiDivider() {
         String divider = "";
         for (int i = 0; i < 17; i++) {
             divider += ":fork_knife_plate: ";

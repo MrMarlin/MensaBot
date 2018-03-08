@@ -10,8 +10,8 @@ import static java.lang.Math.toIntExact;
 
 public class MensaBot extends TelegramLongPollingBot {
 
-    MensaBotUtil mensaBotUtil = new MensaBotUtil();
-    Voting voting = new Voting();
+    private MensaBotUtil mensaBotUtil = new MensaBotUtil();
+    private Voting voting = new Voting();
 
     public void onUpdateReceived(Update update) {
 
@@ -56,7 +56,7 @@ public class MensaBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "Enter bot token here";
+        return "Enter bot token here!";
     }
 
     private String createPollMessage() {

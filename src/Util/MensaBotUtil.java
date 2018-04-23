@@ -66,10 +66,11 @@ public class MensaBotUtil {
 
         resultString += generateEmojiDivider() + "\n";
         resultString += "\n";
-
-        for (int i = 0; i < 2; i++) {
-            resultString += "<b>Bistro: </b>\n" + bistroMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
-                    bistroMenuplanList.get(weekday - 2).get(i).getDescription() + "\n";
+        if (bistroMenuplanList.size() >= 2) {
+            for (int i = 0; i < 2; i++) {
+                resultString += "<b>Bistro: </b>\n" + bistroMenuplanList.get(weekday - 2).get(i).getTitle() + "\n" +
+                        bistroMenuplanList.get(weekday - 2).get(i).getDescription() + "\n";
+            }
         }
         return resultString;
     }

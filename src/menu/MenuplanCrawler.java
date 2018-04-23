@@ -4,9 +4,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MenuplanCrawler {
@@ -47,14 +50,18 @@ public class MenuplanCrawler {
 
         Elements titles = website.select(HTML_ELEMENT_MENU_TITLE);
         for (Element title : titles) {
-            if (websiteToCrawl.equals("Mensa")) {
-                menuTitles.add(title.text());
+            if (checkForNotAvailable(title.text())) {
+                menuTitles.add("Not Available");
             } else {
-                if (!(title.nextElementSibling()
-                        .nextElementSibling()
-                        .nextElementSibling()
-                        .select("div.menu-prices").hasText())) {
+                if (websiteToCrawl.equals("Mensa")) {
                     menuTitles.add(title.text());
+                } else {
+                    if (!(title.nextElementSibling()
+                            .nextElementSibling()
+                            .nextElementSibling()
+                            .select("div.menu-prices").hasText())) {
+                        menuTitles.add(title.text());
+                    }
                 }
             }
         }
@@ -101,6 +108,14 @@ public class MenuplanCrawler {
         } else {
             throw new IllegalArgumentException();
         }
+    }
+
+    private static boolean checkForNotAvailable(String menuTitle) {
+        String patternString = "Für diesen Betrieb.*";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(menuTitle);
+        boolean matches = matcher.matches();
+        return matches;
     }
 
 }

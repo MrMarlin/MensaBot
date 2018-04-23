@@ -56,7 +56,7 @@ public class MensaBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "Enter bot token here";
+        return "532424566:AAHqQT4xGvq4OFHeJE6crufRA9IFDsXQeZw";
     }
 
     private String createPollMessage() {
